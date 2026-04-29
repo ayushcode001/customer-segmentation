@@ -1,0 +1,7 @@
+=== E-Commerce Dataset EDA Summary ===
+
+Total Transactions: 110194
+Unique Customers: 93357
+Total Revenue: R$ 13,221,363.14
+Date Range: 2016-10-03 09:44:50 to 2018-08-29 15:00:37
+
