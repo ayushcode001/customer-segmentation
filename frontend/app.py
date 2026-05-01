@@ -2,10 +2,11 @@
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.express as px
+
+import os
 
 # Configuration
-API_URL = "http://127.0.0.1:8000/predict-segment"
+API_URL = os.getenv("API_URL", "http://localhost:8000/predict-segment")
 st.set_page_config(page_title="Customer Segmentation UI", layout="wide")
 
 # --- UI Header ---
