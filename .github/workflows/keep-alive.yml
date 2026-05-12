@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "Pinging Streamlit app to keep it awake..."
           # Replace with your actual Streamlit Cloud URL
-          APP_URL="https://customer-segmentation-ayushcode001.streamlit.app/"
+          APP_URL="https://customer-segmentation-os.streamlit.app/"
 
           # Attempt to load the page (follow redirects, 30s timeout)
           HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}" -L --max-time 30 "$APP_URL")
