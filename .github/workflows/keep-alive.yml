@@ -1,0 +1,41 @@
+# .github/workflows/keep-alive.yml
+# Pings the Streamlit app every 5 days to prevent it from going to sleep.
+# Streamlit Community Cloud puts apps to sleep after ~7 days of inactivity.
+
+name: Keep Streamlit Alive
+
+on:
+  schedule:
+    # Runs at 08:00 UTC every 5 days (1st, 6th, 11th, 16th, 21st, 26th, 31st)
+    - cron: "0 8 */5 * *"
+  workflow_dispatch: # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        run: |
+          echo "Pinging Streamlit app to keep it awake..."
+          # Replace with your actual Streamlit Cloud URL
+          APP_URL="https://customer-segmentation-ayushcode001.streamlit.app/"
+
+          # Attempt to load the page (follow redirects, 30s timeout)
+          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}" -L --max-time 30 "$APP_URL")
+
+          echo "HTTP Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+            echo " App is alive (HTTP $HTTP_STATUS)"
+          else
+            echo " App returned HTTP $HTTP_STATUS — it may be waking up. Retrying in 60s..."
+            sleep 60
+            HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}" -L --max-time 60 "$APP_URL")
+            echo "Retry HTTP Status: $HTTP_STATUS"
+            if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+              echo " App is alive after retry (HTTP $HTTP_STATUS)"
+            else
+              echo " App may still be down (HTTP $HTTP_STATUS)"
+              exit 1
+            fi
+          fi
