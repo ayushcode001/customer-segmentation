@@ -8,9 +8,7 @@
 
 # Retail Customer Segmentation — End-to-End ML Pipeline
 
-> **Turn 110K raw e-commerce transactions into four actionable customer personas — from**
->
-> **data ingestion to a live, interactive dashboard.**
+> **Turn 110K raw e-commerce transactions into four actionable customer personas — from data ingestion to a live, interactive dashboard.**
 
  **[Live Demo → customer-segmentation-os.streamlit.app](https://customer-segmentation-os.streamlit.app/)**
 
@@ -37,7 +35,7 @@ The raw Olist dataset is split across **9 normalized CSV tables** (customers, or
 
 ```
 Customers ──┐
-             ├── Orders + Payments (agg to order-level) + Reviews (latest per order)
+             ├── Orders + Payments (agg) + Reviews (latest per order)
 Products ───┤
 Sellers ────┘
 ```
@@ -53,13 +51,13 @@ Sellers ────┘
 
 Classic RFM (Recency, Frequency, Monetary) extended with behavioral signals:
 
-| Feature                    | Description              | Business Signal             |
-| :------------------------- | :----------------------- | :-------------------------- |
-| **Recency**          | Days since last purchase | Engagement freshness        |
-| **Frequency**        | Count of unique orders   | Purchase habit strength     |
-| **Monetary**         | Total spend (BRL)        | Revenue contribution        |
-| **Avg Review Score** | Mean rating given        | Satisfaction level          |
-| **Avg Installments** | Mean installment usage   | Price sensitivity indicator |
+| Feature | Description | Business Signal |
+| :--- | :--- | :--- |
+| **Recency** | Days since last purchase | Engagement freshness |
+| **Frequency** | Count of unique orders | Purchase habit strength |
+| **Monetary** | Total spend (BRL) | Revenue contribution |
+| **Avg Review Score** | Mean rating given | Satisfaction level |
+| **Avg Installments** | Mean installment usage | Price sensitivity indicator |
 
 ### Modeling — K-Means Clustering
 
@@ -76,11 +74,14 @@ Classic RFM (Recency, Frequency, Monetary) extended with behavioral signals:
 
 ---
 
-## Customer Personas Discovered
+## 🎯 Customer Personas Discovered
 
-<table>
-<tr>
-<td align="center" width="25%">
+| Persona | Profile | Recommended Action |
+| :--- | :--- | :--- |
+| **Champion** | High value, highly satisfied | Add to VIP program — do NOT offer discounts |
+| **Satisfied One-Timer** | Good experience, hasn't returned | Send 10% cross-sell discount to build habit |
+| **At-Risk Whale** | High spend, fading engagement | Trigger aggressive "We Miss You" campaign |
+| **Detractor** | Low satisfaction, unlikely to return | Suppress from ads, trigger service recovery email |
 
 ---
 
@@ -88,53 +89,52 @@ Classic RFM (Recency, Frequency, Monetary) extended with behavioral signals:
 
 ```
 customer-segmentation/
-│
 ├── data/
-│   ├── raw/                        # 9 Olist CSV tables (~125 MB)
-│   └── processed/                  # Parquet checkpoints
+│   ├── raw/                   # 9 Olist CSV tables (~125 MB)
+│   └── processed/             # Parquet checkpoints
 │
-├── src/                            # Core ML pipeline modules
-│   ├── ingestion.py                # Multi-file CSV loader with validation
-│   ├── merge.py                    # Relational join chain (pre-aggregated)
-│   ├── cleaning.py                 # Filtering, imputation, type casting
-│   ├── eda.py                      # Automated EDA plots & summary report
-│   ├── features.py                 # Extended RFM feature engineering
-│   └── model.py                    # Scaling → K-Means → PCA → Serialization
+├── src/
+│   ├── ingestion.py           # Multi-file CSV loader with validation
+│   ├── merge.py               # Relational join chain (pre-aggregated)
+│   ├── cleaning.py            # Filtering, imputation, type casting
+│   ├── eda.py                 # Automated EDA plots & summary report
+│   ├── features.py            # Extended RFM feature engineering
+│   └── model.py               # Scaling → K-Means → PCA → Export
 │
 ├── api/
-│   └── main.py                     # FastAPI REST endpoint (/predict-segment)
+│   └── main.py                # FastAPI REST endpoint (/predict-segment)
 │
 ├── frontend/
-│   └── app.py                      # Streamlit interactive dashboard
+│   └── app.py                 # Streamlit interactive dashboard
 │
 ├── outputs/
-│   ├── models/                     # scaler.pkl, kmeans_model.pkl, pca_transformer.pkl
-│   ├── plots/                      # Auto-generated EDA visualizations
-│   └── reports/                    # EDA text summary
+│   ├── models/                # scaler.pkl, kmeans_model.pkl, pca_transformer.pkl
+│   ├── plots/                 # Auto-generated EDA visualizations
+│   └── reports/               # EDA text summary
 │
-├── config.py                       # Centralized paths & constants
-├── run_pipeline.py                 # One-command full pipeline execution
-├── run_app.py                      # Launch API + Frontend together
-├── profile_clusters.py             # Cluster profiling utility
-├── requirements.txt                # Pinned dependencies
+├── config.py                  # Centralized paths & constants
+├── run_pipeline.py            # One-command full pipeline execution
+├── run_app.py                 # Launch API + Frontend together
+├── profile_clusters.py        # Cluster profiling utility
+├── requirements.txt           # Pinned dependencies
 └── .github/workflows/
-    └── keep-alive.yml              # Cron job to prevent Streamlit sleep
+    └── keep-alive.yml         # Cron job to prevent Streamlit sleep
 ```
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
-| Layer                      | Technology                                 | Purpose                               |
-| :------------------------- | :----------------------------------------- | :------------------------------------ |
-| **Data Processing**  | Pandas, NumPy, PyArrow                     | ETL, feature engineering, Parquet I/O |
-| **Visualization**    | Matplotlib, Seaborn, Plotly                | EDA plots, interactive charts         |
-| **Machine Learning** | Scikit-Learn (KMeans, PCA, StandardScaler) | Clustering, dimensionality reduction  |
-| **Model Serving**    | Joblib                                     | Artifact serialization & loading      |
-| **API**              | FastAPI, Pydantic, Uvicorn                 | REST endpoint with input validation   |
-| **Frontend**         | Streamlit                                  | Interactive prediction dashboard      |
-| **Deployment**       | Streamlit Community Cloud                  | Free-tier cloud hosting               |
-| **CI/CD**            | GitHub Actions                             | Keep-alive cron, version control      |
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Data Processing** | Pandas, NumPy, PyArrow | ETL, feature engineering, Parquet I/O |
+| **Visualization** | Matplotlib, Seaborn, Plotly | EDA plots, interactive charts |
+| **Machine Learning** | Scikit-Learn (KMeans, PCA, StandardScaler) | Clustering, dimensionality reduction |
+| **Model Serving** | Joblib | Artifact serialization & loading |
+| **API** | FastAPI, Pydantic, Uvicorn | REST endpoint with input validation |
+| **Frontend** | Streamlit | Interactive prediction dashboard |
+| **Deployment** | Streamlit Community Cloud | Free-tier cloud hosting |
+| **CI/CD** | GitHub Actions | Keep-alive cron, version control |
 
 ---
 
@@ -177,16 +177,16 @@ python run_app.py
 
 ## Key Results
 
-| Metric                       | Value                      |
-| :--------------------------- | :------------------------- |
-| Total transactions processed | **110,194**          |
-| Unique customers segmented   | **93,357**           |
-| Total revenue analyzed       | **R$ 13.2M**         |
-| Date range                   | Oct 2016 — Aug 2018       |
-| Number of clusters           | **4**                |
-| Clustering algorithm         | K-Means                    |
-| Validation metric            | Silhouette Score           |
-| Deployment                   | Live on Streamlit Cloud |
+| Metric | Value |
+| :--- | :--- |
+| Total transactions processed | **110,194** |
+| Unique customers segmented | **93,357** |
+| Total revenue analyzed | **R$ 13.2M** |
+| Date range | Oct 2016 — Aug 2018 |
+| Number of clusters | **4** |
+| Clustering algorithm | K-Means |
+| Validation metric | Silhouette Score |
+| Deployment | Live on Streamlit Cloud |
 
 ---
 
@@ -216,8 +216,11 @@ python run_app.py
 }
 ```
 
+---
 
+---
 
+---
 
 <p align="center">
   <b>Built by <a href="https://github.com/ayushcode001">Ayush</a></b>
