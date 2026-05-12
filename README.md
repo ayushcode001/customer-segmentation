@@ -8,10 +8,6 @@
 
 # Retail Customer Segmentation — End-to-End ML Pipeline
 
-> ```
->
-> ```
->
 > **Turn 110K raw e-commerce transactions into four actionable customer personas — from**
 >
 > **data ingestion to a live, interactive dashboard.**
